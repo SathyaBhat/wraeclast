@@ -21,3 +21,6 @@ services:
             - "traefik.http.routers.beszel.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
 volumes:
     beszel_data:
+networks:
+    dokploy-network:
+        external: true
