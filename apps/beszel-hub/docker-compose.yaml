@@ -1,0 +1,23 @@
+services:
+    beszel-hub:
+        image: henrygd/beszel:0.13.2
+        container_name: beszel-hub
+        restart: unless-stopped
+        volumes:
+            - beszel_data:/beszel_data
+            - ./beszel_socket:/beszel_socket
+        networks:
+            - dokploy-network
+        environment:
+            - APP_URL=https://wraeclast.bishop-bass.ts.net/beszel
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.beszel.entrypoints=web,websecure"
+            - "traefik.http.routers.beszel.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/beszel`)"
+            - "traefik.http.middlewares.strip-beszel.stripprefix.prefixes=/beszel"
+            - "traefik.http.routers.beszel.middlewares=strip-beszel@docker"
+            - "traefik.http.routers.beszel.tls=true"
+            - "traefik.http.routers.beszel.tls.certresolver=tailscale"
+            - "traefik.http.routers.beszel.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+volumes:
+    beszel_data:
