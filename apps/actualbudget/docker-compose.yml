@@ -20,3 +20,5 @@ services:
 networks:
     dokploy-network:
         external: true
+volumes:
+  actual-data:
