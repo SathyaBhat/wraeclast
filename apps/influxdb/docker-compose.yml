@@ -1,4 +1,11 @@
 services:
+  influxdb-init:
+    image: alpine:latest
+    user: "0:0"
+    volumes:
+      - influxdb-data:/var/lib/influxdb3
+    command: chown -R 1500:1500 /var/lib/influxdb3
+
   influxdb:
     image: influxdb:3-core
     container_name: influxdb
@@ -14,6 +21,9 @@ services:
     volumes:
       - influxdbdata:/var/lib/influxdb3/data
       - influxdbplugins:/var/lib/influxdb3/plugins
+    depends_on:
+      influxdb-init:
+        condition: service_completed_successfully
     networks:
       - dokploy-network
     restart: unless-stopped
