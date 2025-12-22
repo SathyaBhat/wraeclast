@@ -17,10 +17,8 @@ services:
       - --node-id=wraeclast
       - --object-store=file
       - --data-dir=/var/lib/influxdb3/data
-      - --plugin-dir=/var/lib/influxdb3/plugins
     volumes:
       - influxdbdata:/var/lib/influxdb3/data
-      - influxdbplugins:/var/lib/influxdb3/plugins
     depends_on:
       influxdb-init:
         condition: service_completed_successfully
@@ -31,7 +29,6 @@ services:
       - path: .env
 volumes:
   influxdbdata:
-  influxdbplugins:
 networks:
   dokploy-network:
     external: true
