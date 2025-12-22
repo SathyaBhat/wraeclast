@@ -3,7 +3,7 @@ services:
     image: alpine:latest
     user: "0:0"
     volumes:
-      - influxdb-data:/var/lib/influxdb3
+      - influxdbdata:/var/lib/influxdb3
     command: chown -R 1500:1500 /var/lib/influxdb3
 
   influxdb:
