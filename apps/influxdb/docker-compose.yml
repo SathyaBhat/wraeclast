@@ -1,0 +1,27 @@
+services:
+  influxdb:
+    image: influxdb:3-core
+    container_name: influxdb
+    ports:
+      - 8181:8181
+    command:
+      - influxdb3
+      - serve
+      - --node-id=wraeclast
+      - --object-store=file
+      - --data-dir=/var/lib/influxdb3/data
+      - --plugin-dir=/var/lib/influxdb3/plugins
+    volumes:
+      - influxdbdata: /var/lib/influxdb3/data
+      - influxdbplugins: /var/lib/influxdb3/plugins
+    networks:
+      - dokploy-network
+    restart: unless-stopped
+    env_file:
+      - path: .env
+volumes:
+  influxdbdata:
+  influxdbplugins:
+networks:
+  dokploy-network:
+    external: true
