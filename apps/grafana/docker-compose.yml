@@ -8,12 +8,12 @@ services:
       - dokploy-network
     restart: unless-stopped
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.grafana.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/grafana`)
-      - traefik.http.services.grafana.loadbalancer.server.port: 3000
-      - traefik.http.routers.grafana.tls=true
-      - traefik.http.routers.grafana.tls.certresolver=tailscale
-      - traefik.http.routers.grafana.tls.domains[0].main=wraeclast.bishop-bass.ts.net
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/grafana`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=tailscale"
+      - "traefik.http.routers.grafana.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
     env_file:
       - path: .env
 volumes:
