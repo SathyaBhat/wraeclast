@@ -1,0 +1,25 @@
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana:/var/lib/grafana
+    networks:
+      - dokploy-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.entrypoints=web,websecure"
+      - "traefik.http.routers.grafana.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/grafana`)"
+      - "traefik.http.middlewares.strip-grafana.stripprefix.prefixes=/grafana"
+      - "traefik.http.routers.grafana.middlewares=strip-grafana@docker"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=tailscale"
+      - "traefik.http.routers.grafana.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+    env_file:
+      - path: .env
+volumes:
+  grafana:
+networks:
+  dokploy-network:
+    external: true
