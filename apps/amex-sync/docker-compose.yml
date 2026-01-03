@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  backend:
+    image: sathyabhat/amex-sync-backend:0.0.1
+    container_name: amex-importer-backend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - dokploy-network
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_PATH: /app/db/transactions.db
+      CORS_ORIGIN: "https://wraeclast.bishop-bass.ts.net"
+      MAX_FILE_SIZE: 10485760
+    volumes:
+      - amex_db:/app/db
+      - amex_uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  frontend:
+    image: sathyabhat/amex-sync-web:0.0.1
+    container_name: amex-importer-web
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - dokploy-network
+    environment:
+      VITE_API_URL: /amex-sync/api
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  amex_db:
+  amex_uploads:
+
+networks:
+  dokploy-network:
+    external: true
