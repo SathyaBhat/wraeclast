@@ -18,12 +18,6 @@ services:
     volumes:
       - amex_db:/app/db
       - amex_uploads:/app/uploads
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 5s
 
   frontend:
     image: sathyabhat/amex-sync-web:0.0.1
@@ -35,9 +29,6 @@ services:
       - dokploy-network
     environment:
       VITE_API_URL: /amex-sync/api
-    depends_on:
-      backend:
-        condition: service_healthy
 
 volumes:
   amex_db:
