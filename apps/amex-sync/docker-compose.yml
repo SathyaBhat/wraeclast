@@ -20,7 +20,7 @@ services:
       - amex_uploads:/app/uploads
 
   frontend:
-    image: sathyabhat/amex-sync-web:0.0.2
+    image: sathyabhat/amex-sync-web:0.0.3
     container_name: amex-importer-web
     restart: unless-stopped
     labels:
