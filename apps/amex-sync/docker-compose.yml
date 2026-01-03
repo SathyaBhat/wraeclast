@@ -23,6 +23,14 @@ services:
     image: sathyabhat/amex-sync-web:0.0.1
     container_name: amex-importer-web
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.amex-importer-web.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/amex-sync`)"
+      - "traefik.http.routers.amex-importer-web.entrypoints=web,websecure"
+      - "traefik.http.services.amex-importer-web.loadbalancer.server.port=3000"
+      - "traefik.http.routers.amex-importer-web.tls=true"
+      - "traefik.http.routers.amex-importer-web.tls.certresolver=tailscale"
+      - "traefik.http.routers.amex-importer-web.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
     expose:
       - "80"
     networks:
