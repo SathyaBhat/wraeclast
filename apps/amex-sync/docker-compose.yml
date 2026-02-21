@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    image: sathyabhat/amex-sync-backend:0.0.5
+    image: sathyabhat/amex-sync-backend:0.0.6
     container_name: amex-importer-backend
     restart: unless-stopped
     expose:
@@ -22,7 +22,7 @@ services:
       - amex_uploads:/app/uploads
 
   frontend:
-    image: sathyabhat/amex-sync-web:0.0.7
+    image: sathyabhat/amex-sync-web:0.0.8
     container_name: amex-importer-web
     restart: unless-stopped
     labels:
