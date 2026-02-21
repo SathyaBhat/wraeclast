@@ -9,6 +9,8 @@ services:
       - "3000"
     networks:
       - dokploy-network
+    env_file:
+      - path: .env
     environment:
       NODE_ENV: production
       PORT: 3000
