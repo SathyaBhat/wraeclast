@@ -77,12 +77,21 @@ table.rows-and-columns tr:hover td {
     background: #f0f7f4;
 }
 
-table.rows-and-columns a {
+table.rows-and-columns th a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+table.rows-and-columns th a:hover {
+    text-decoration: underline;
+}
+
+table.rows-and-columns td a {
     color: var(--link);
     text-decoration: none;
 }
 
-table.rows-and-columns a:hover {
+table.rows-and-columns td a:hover {
     text-decoration: underline;
 }
 
