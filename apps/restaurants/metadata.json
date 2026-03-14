@@ -1,0 +1,15 @@
+{
+  "title": "Restaurants & Cafes",
+  "description": "Places I've eaten at, from weekly notes",
+  "databases": {
+    "restaurants": {
+      "tables": {
+        "restaurants": {
+          "title": "Restaurants & Cafes",
+          "facets": ["cuisine", "suburb", "city", "country", "rating"],
+          "sort": "name"
+        }
+      }
+    }
+  }
+}

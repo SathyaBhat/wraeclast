@@ -1,0 +1,16 @@
+services:
+  datasette:
+    build: .
+    container_name: restaurants
+    restart: unless-stopped
+    volumes:
+      - restaurants:/data
+    networks:
+      - dokploy-network
+
+volumes:
+  restaurants:
+
+networks:
+  dokploy-network:
+    external: true
