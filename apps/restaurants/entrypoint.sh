@@ -12,4 +12,7 @@ fi
 exec datasette "$DB" \
     --host 0.0.0.0 \
     --port 8001 \
-    --metadata /app/metadata.json
+    --metadata /app/metadata.json \
+    --static static:/app/static \
+    --setting default_allow_sql off \
+    --template-dir /app/templates

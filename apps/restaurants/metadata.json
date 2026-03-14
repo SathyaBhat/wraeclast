@@ -1,6 +1,8 @@
 {
   "title": "Restaurants & Cafes",
   "description": "Places I've eaten at, from weekly notes",
+  "extra_css_urls": ["/static/custom.css"],
+  "allow_sql": {},
   "databases": {
     "restaurants": {
       "tables": {
