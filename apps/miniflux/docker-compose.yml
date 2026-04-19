@@ -2,7 +2,9 @@ services:
   miniflux:
     image: miniflux/miniflux:latest
     container_name: miniflux
-    networks: dokploy-network
+    networks:
+      - dokploy-network
+      - miniflux
     depends_on:
       db:
         condition: service_healthy
@@ -23,8 +25,11 @@ services:
       test: ["CMD", "pg_isready", "-U", "miniflux"]
       interval: 10s
       start_period: 30s
+    networks:
+      - miniflux
 volumes:
   miniflux-db:
 networks:
+  miniflux:
   dokploy-network:
     external: true
