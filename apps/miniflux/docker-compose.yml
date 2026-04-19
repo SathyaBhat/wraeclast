@@ -1,0 +1,30 @@
+services:
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    networks: dokploy-network
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+  db:
+    image: postgres:18
+    container_name: postgres
+    env_file:
+      - path: .env
+    volumes:
+      # You may have to adjust the volume path depending on the version of Postgres
+      # Postgres 18 uses /var/lib/postgresql
+      # Postgres 17 and below uses /var/lib/postgresql/data
+      # See https://hub.docker.com/_/postgres#pgdata
+      - miniflux-db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      interval: 10s
+      start_period: 30s
+volumes:
+  miniflux-db:
+networks:
+  dokploy-network:
+    external: true
