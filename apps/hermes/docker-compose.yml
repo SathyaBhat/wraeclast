@@ -15,6 +15,7 @@ services:
       - path: .env
 volumes:
   hermes:
+    external: true
 networks:
   dokploy-network:
     external: true
