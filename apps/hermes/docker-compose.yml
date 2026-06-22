@@ -4,6 +4,8 @@ services:
     container_name: hermes
     restart: unless-stopped
     command: gateway run
+    networks:
+      - dokploy-network
     ports:
       - "8642:8642"   # gateway API
       - "9119:9119"   # dashboard (only reached when HERMES_DASHBOARD=1)
@@ -11,4 +13,8 @@ services:
       - hermes:/opt/data
     env_file:
       - path: .env
-    
+volumes:
+  hermes:
+networks:
+  dokploy-network:
+    external: true
