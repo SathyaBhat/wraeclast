@@ -32,6 +32,9 @@ services:
       - "traefik.http.routers.recipes.entrypoints=web,websecure"
       - "traefik.http.routers.recipes.tls.certresolver=tailscale"
       - "traefik.http.routers.recipes.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+      - "traefik.http.routers.recipes.middlewares=recipes-media-rewrite"
+      - "traefik.http.middlewares.recipes-media-rewrite.replacepathregex.regex=^/recipes/media/(.*)"
+      - "traefik.http.middlewares.recipes-media-rewrite.replacepathregex.replacement=/media/$$1"
       - "traefik.http.services.recipes.loadbalancer.server.port=80"
 
     networks:
