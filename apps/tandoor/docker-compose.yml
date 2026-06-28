@@ -1,6 +1,7 @@
 services:
   db_recipes:
     restart: always
+    container_name: tandoordb
     image: postgres:16-alpine
     volumes:
       - tandoorpg:/var/lib/postgresql/data
@@ -12,6 +13,7 @@ services:
   web_recipes:
     restart: always
     image: vabene1111/recipes
+    container_name: tandoor
     env_file:
       - path: .env
     environment:
