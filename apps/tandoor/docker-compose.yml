@@ -32,7 +32,7 @@ services:
       - "traefik.http.routers.recipes.entrypoints=web,websecure"
       - "traefik.http.routers.recipes.tls.certresolver=tailscale"
       - "traefik.http.routers.recipes.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
-      - "traefik.http.services.recipes.loadbalancer.server.port=8080"
+      - "traefik.http.services.recipes.loadbalancer.server.port=80"
 
     networks:
       - dokploy-network
