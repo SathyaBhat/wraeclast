@@ -1,0 +1,45 @@
+services:
+  db_recipes:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - tandoorpg:/var/lib/postgresql/data
+    env_file:
+      - path: .env
+    networks:
+      - internal
+
+  web_recipes:
+    restart: always
+    image: vabene1111/recipes
+    env_file:
+      - path: .env
+    environment:
+      - SCRIPT_NAME=/recipes
+      - STATIC_URL=/recipes/static/
+      - MEDIA_URL=/recipes/media/
+    volumes:
+      - staticfiles:/opt/recipes/staticfiles
+      - mediafiles:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+    labels: 
+      - "traefik.enable=true"
+      - "traefik.http.routers.recipes.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/recipes`)"
+      - "traefik.http.routers.recipes.tls=true"
+      - "traefik.http.routers.recipes.tls.certresolver=tailscale"
+      - "traefik.http.services.recipes.loadbalancer.server.port=8000"
+    networks:
+      - internal
+      - dokploy-network
+
+
+networks:
+  internal:
+  dokploy-network: # This is your external traefik network
+    external: true
+
+volumes:
+  staticfiles:
+  mediafiles:
+  tandoorpg:
