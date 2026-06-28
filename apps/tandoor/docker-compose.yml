@@ -7,7 +7,7 @@ services:
     env_file:
       - path: .env
     networks:
-      - internal
+      - dokploy-network
 
   web_recipes:
     restart: always
@@ -27,15 +27,16 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.recipes.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/recipes`)"
       - "traefik.http.routers.recipes.tls=true"
+      - "traefik.http.routers.recipes.entrypoints=web,websecure"
       - "traefik.http.routers.recipes.tls.certresolver=tailscale"
+      - "traefik.http.routers.recipes.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
       - "traefik.http.services.recipes.loadbalancer.server.port=8080"
+
     networks:
-      - internal
       - dokploy-network
 
 
 networks:
-  internal:
   dokploy-network: # This is your external traefik network
     external: true
 
