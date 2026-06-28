@@ -19,7 +19,7 @@ services:
     environment:
       - SCRIPT_NAME=/recipes
       - STATIC_URL=/recipes/static/
-      - MEDIA_URL=/recipes/media/
+      - MEDIA_URL=https://wraeclast.bishop-bass.ts.net/recipes/media/
     volumes:
       - staticfiles:/opt/recipes/staticfiles
       - mediafiles:/opt/recipes/mediafiles
