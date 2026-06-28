@@ -28,7 +28,7 @@ services:
       - "traefik.http.routers.recipes.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/recipes`)"
       - "traefik.http.routers.recipes.tls=true"
       - "traefik.http.routers.recipes.tls.certresolver=tailscale"
-      - "traefik.http.services.recipes.loadbalancer.server.port=8000"
+      - "traefik.http.services.recipes.loadbalancer.server.port=8080"
     networks:
       - internal
       - dokploy-network
