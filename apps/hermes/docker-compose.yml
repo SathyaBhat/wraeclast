@@ -3,9 +3,11 @@ services:
     image: nousresearch/hermes-agent:v2026.7.20
     container_name: hermes
     restart: unless-stopped
-    command: >-
-      sh -c "gateway run > /tmp/hermes-gateway.log 2>&1 &
-      exec dashboard --host 0.0.0.0 --port 9119"
+    entrypoint: >-
+      /bin/sh -c "
+      gateway run > /tmp/hermes-gateway.log 2>&1 &
+      exec /opt/hermes/docker/main-wrapper.sh dashboard --host 0.0.0.0 --port 9119
+      "
     networks:
       - dokploy-network
     ports:
