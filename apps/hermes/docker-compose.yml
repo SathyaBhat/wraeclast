@@ -3,7 +3,9 @@ services:
     image: nousresearch/hermes-agent:v2026.7.20
     container_name: hermes
     restart: unless-stopped
-    command: gateway run
+    command: >-
+      sh -c "gateway run > /tmp/hermes-gateway.log 2>&1 &
+      exec dashboard --host 0.0.0.0 --port 9119"
     networks:
       - dokploy-network
     ports:
@@ -20,6 +22,13 @@ services:
       - "traefik.http.middlewares.hermes-prefix.headers.customrequestheaders.X-Forwarded-Prefix=/hermes"
       - "traefik.http.middlewares.hermes-strip-prefix.stripprefix.prefixes=/hermes"
       - "traefik.http.services.hermes.loadbalancer.server.port=9119"
+      - "traefik.http.routers.hermes-auth.rule=Host(`wraeclast.bishop-bass.ts.net`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/login`) || PathPrefix(`/dashboard-plugins`))"
+      - "traefik.http.routers.hermes-auth.entrypoints=web,websecure"
+      - "traefik.http.routers.hermes-auth.tls=true"
+      - "traefik.http.routers.hermes-auth.tls.certresolver=tailscale"
+      - "traefik.http.routers.hermes-auth.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+      - "traefik.http.routers.hermes-auth.middlewares=hermes-prefix"
+      - "traefik.http.routers.hermes-auth.service=hermes"
     volumes:
       - hermes:/opt/data
     env_file:
