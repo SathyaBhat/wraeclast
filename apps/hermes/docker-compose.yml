@@ -13,7 +13,12 @@ services:
       - "9119:9119"   # dashboard (only reached when HERMES_DASHBOARD=1)
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hermes.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/hermes`)"
+
+      # Router 1 (hermes): catches /hermes/* SPA pages + bare /auth/* paths from
+      # the server-rendered login page (which hardcodes fetch('/auth/password-login')).
+      # NO strip — the container sees the full /hermes/... path so the auth gate
+      # builds next=/hermes/ in the login redirect, and post-login lands correctly.
+      - "traefik.http.routers.hermes.rule=Host(`wraeclast.bishop-bass.ts.net`) && (PathPrefix(`/hermes`) || PathPrefix(`/auth`))"
       - "traefik.http.routers.hermes.entrypoints=web,websecure"
       - "traefik.http.routers.hermes.tls=true"
       - "traefik.http.routers.hermes.tls.certresolver=tailscale"
@@ -22,14 +27,19 @@ services:
       - "traefik.http.middlewares.hermes-prefix.headers.customrequestheaders.X-Forwarded-Prefix=/hermes"
       - "traefik.http.routers.hermes.service=hermes"
       - "traefik.http.services.hermes.loadbalancer.server.port=9119"
-      - "traefik.http.routers.hermes-auth.rule=Host(`wraeclast.bishop-bass.ts.net`) && (PathPrefix(`/hermes/api`) || PathPrefix(`/hermes/auth`) || PathPrefix(`/hermes/login`) || PathPrefix(`/hermes/assets`) || PathPrefix(`/hermes/favicon.ico`) || PathPrefix(`/hermes/fonts`) || PathPrefix(`/hermes/ds-assets`) || PathPrefix(`/hermes/dashboard-plugins`))"
-      - "traefik.http.routers.hermes-auth.entrypoints=web,websecure"
-      - "traefik.http.routers.hermes-auth.tls=true"
-      - "traefik.http.routers.hermes-auth.tls.certresolver=tailscale"
-      - "traefik.http.routers.hermes-auth.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
-      - "traefik.http.middlewares.hermes-strip.stripprefix.prefixes=/hermes"
-      - "traefik.http.routers.hermes-auth.middlewares=hermes-strip,hermes-prefix"
-      - "traefik.http.routers.hermes-auth.service=hermes"
+
+      # Router 2 (hermes-strip): catches specific /hermes/* paths that must hit
+      # bare FastAPI routes (/api/*, /login, /assets/*, etc.) and strips the prefix.
+      # Its rule is much longer than router 1's so Traefik's length-based priority
+      # ensures it wins for these paths.
+      - "traefik.http.routers.hermes-strip.rule=Host(`wraeclast.bishop-bass.ts.net`) && (PathPrefix(`/hermes/api`) || PathPrefix(`/hermes/auth`) || PathPrefix(`/hermes/login`) || PathPrefix(`/hermes/assets`) || PathPrefix(`/hermes/favicon.ico`) || PathPrefix(`/hermes/fonts`) || PathPrefix(`/hermes/ds-assets`) || PathPrefix(`/hermes/dashboard-plugins`))"
+      - "traefik.http.routers.hermes-strip.entrypoints=web,websecure"
+      - "traefik.http.routers.hermes-strip.tls=true"
+      - "traefik.http.routers.hermes-strip.tls.certresolver=tailscale"
+      - "traefik.http.routers.hermes-strip.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+      - "traefik.http.routers.hermes-strip.middlewares=hermes-strip-mw,hermes-prefix"
+      - "traefik.http.middlewares.hermes-strip-mw.stripprefix.prefixes=/hermes"
+      - "traefik.http.routers.hermes-strip.service=hermes"
     volumes:
       - hermes:/opt/data
     env_file:
