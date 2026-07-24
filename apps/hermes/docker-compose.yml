@@ -23,7 +23,6 @@ services:
       - "traefik.http.routers.hermes.service=hermes"
       - "traefik.http.services.hermes.loadbalancer.server.port=9119"
       - "traefik.http.routers.hermes-auth.rule=Host(`wraeclast.bishop-bass.ts.net`) && (PathPrefix(`/hermes/api`) || PathPrefix(`/hermes/auth`) || PathPrefix(`/hermes/login`) || PathPrefix(`/hermes/assets`) || PathPrefix(`/hermes/favicon.ico`) || PathPrefix(`/hermes/fonts`) || PathPrefix(`/hermes/ds-assets`) || PathPrefix(`/hermes/dashboard-plugins`))"
-      - "traefik.http.routers.hermes-auth.priority=10"
       - "traefik.http.routers.hermes-auth.entrypoints=web,websecure"
       - "traefik.http.routers.hermes-auth.tls=true"
       - "traefik.http.routers.hermes-auth.tls.certresolver=tailscale"
