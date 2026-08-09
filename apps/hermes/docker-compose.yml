@@ -42,6 +42,7 @@ services:
       - "traefik.http.routers.hermes-strip.service=hermes"
     volumes:
       - hermes:/opt/data
+      - /home/sathyabhat/obsidian:/opt/data/obsidian
     env_file:
       - path: .env
 volumes:
