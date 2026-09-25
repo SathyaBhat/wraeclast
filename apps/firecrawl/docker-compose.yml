@@ -26,6 +26,9 @@ services:
     container_name: firecrawl-api
     restart: unless-stopped
     command: node dist/src/harness.js --start-docker
+    # Dokploy writes UI variables to .env; env_file injects them into this container.
+    env_file:
+      - .env
     environment:
       <<: *common-api-environment
       SELF_HOSTED_WEBHOOK_URL: https://wraeclast.bishop-bass.ts.net/firecrawl
@@ -102,6 +105,9 @@ services:
     image: ghcr.io/firecrawl/nuq-postgres:latest
     container_name: firecrawl-nuq-postgres
     restart: unless-stopped
+    # Dokploy writes UI variables to .env; env_file injects them into this container.
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
