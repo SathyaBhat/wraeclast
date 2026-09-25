@@ -1,0 +1,128 @@
+name: firecrawl
+
+x-common-api-environment: &common-api-environment
+  REDIS_URL: redis://redis:6379
+  REDIS_RATE_LIMIT_URL: redis://redis:6379
+  PLAYWRIGHT_MICROSERVICE_URL: http://playwright-service:3000/scrape
+  POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+  POSTGRES_HOST: nuq-postgres
+  POSTGRES_PORT: "5432"
+  USE_DB_AUTHENTICATION: ${USE_DB_AUTHENTICATION:-false}
+  NUQ_RABBITMQ_URL: amqp://rabbitmq:5672
+  HOST: 0.0.0.0
+  PORT: "3002"
+  EXTRACT_WORKER_PORT: "3004"
+  WORKER_PORT: "3005"
+  HARNESS_STARTUP_TIMEOUT_MS: "60000"
+  ENV: local
+
+services:
+  api:
+    # Firecrawl publishes its self-host images as :latest; the three upstream
+    # images must be upgraded together after reviewing Firecrawl's release notes.
+    image: ghcr.io/firecrawl/firecrawl:latest
+    container_name: firecrawl-api
+    restart: unless-stopped
+    command: node dist/src/harness.js --start-docker
+    environment:
+      <<: *common-api-environment
+      SELF_HOSTED_WEBHOOK_URL: https://wraeclast.bishop-bass.ts.net/firecrawl
+    depends_on:
+      redis:
+        condition: service_started
+      playwright-service:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      nuq-postgres:
+        condition: service_healthy
+    networks:
+      - firecrawl
+      - dokploy-network
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.firecrawl.rule=Host(`wraeclast.bishop-bass.ts.net`) && PathPrefix(`/firecrawl`)"
+      - "traefik.http.routers.firecrawl.entrypoints=web,websecure"
+      - "traefik.http.routers.firecrawl.tls=true"
+      - "traefik.http.routers.firecrawl.tls.certresolver=tailscale"
+      - "traefik.http.routers.firecrawl.tls.domains[0].main=wraeclast.bishop-bass.ts.net"
+      - "traefik.http.routers.firecrawl.middlewares=firecrawl-strip"
+      - "traefik.http.middlewares.firecrawl-strip.stripprefix.prefixes=/firecrawl"
+      - "traefik.http.services.firecrawl.loadbalancer.server.port=3002"
+
+  playwright-service:
+    image: ghcr.io/firecrawl/playwright-service:latest
+    container_name: firecrawl-playwright
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      MAX_CONCURRENT_PAGES: "5"
+    networks:
+      - firecrawl
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp/.cache:noexec,nosuid,size=1g
+
+  redis:
+    image: redis:alpine
+    container_name: firecrawl-redis
+    restart: unless-stopped
+    command: redis-server --bind 0.0.0.0 --appendonly yes
+    volumes:
+      - firecrawl-redis:/data
+    networks:
+      - firecrawl
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: firecrawl-rabbitmq
+    restart: unless-stopped
+    command: rabbitmq-server
+    volumes:
+      - firecrawl-rabbitmq:/var/lib/rabbitmq
+    networks:
+      - firecrawl
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  nuq-postgres:
+    image: ghcr.io/firecrawl/nuq-postgres:latest
+    container_name: firecrawl-nuq-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    volumes:
+      - firecrawl-postgres:/var/lib/postgresql/data
+    networks:
+      - firecrawl
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  firecrawl-postgres:
+  firecrawl-redis:
+  firecrawl-rabbitmq:
+
+networks:
+  firecrawl:
+  dokploy-network:
+    external: true

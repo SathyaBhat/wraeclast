@@ -8,6 +8,7 @@ Wraeclast is my homeserver powered by ArchLinux. This repo is a monorepo of vari
 - `amex-sync` - Amex transaction sync backend
 - `beszel-agent` / `beszel-hub` - Beszel server monitoring
 - `dawarich` - Dawarich, location history tracker
+- `firecrawl` - Firecrawl self-hosted scraping API
 - `grafana` - Grafana dashboards
 - `hermes` - Hermes agent gateway
 - `influxdb` - InfluxDB
