@@ -32,6 +32,8 @@ services:
     environment:
       <<: *common-api-environment
       SELF_HOSTED_WEBHOOK_URL: https://wraeclast.bishop-bass.ts.net/firecrawl
+      # Use the private tailnet SearXNG service instead of Firecrawl's DuckDuckGo fallback.
+      SEARXNG_ENDPOINT: https://wraeclast.bishop-bass.ts.net/searxng
     depends_on:
       redis:
         condition: service_started
