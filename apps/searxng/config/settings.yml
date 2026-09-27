@@ -1,0 +1,23 @@
+# Minimal local overrides; all unlisted settings inherit SearXNG's upstream defaults.
+use_default_settings: true
+
+general:
+  instance_name: "Wraeclast Search"
+
+search:
+  # Keep the browser UI and enable SearXNG's JSON endpoint for trusted clients.
+  formats:
+    - html
+    - json
+
+server:
+  # Access is limited to the tailnet-protected Traefik route, not the public Internet.
+  public_instance: false
+  limiter: false
+  image_proxy: false
+  method: GET
+  default_http_headers:
+    X-Content-Type-Options: nosniff
+    X-Download-Options: noopen
+    X-Robots-Tag: noindex, nofollow
+    Referrer-Policy: no-referrer

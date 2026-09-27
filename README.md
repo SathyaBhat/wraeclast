@@ -14,5 +14,6 @@ Wraeclast is my homeserver powered by ArchLinux. This repo is a monorepo of vari
 - `influxdb` - InfluxDB
 - `miniflux` - Miniflux RSS reader
 - `restaurants` - Restaurants datasette + submission form
+- `searxng` - Private SearXNG metasearch service
 - `silverbullet` - SilverBullet notes
 - `tandoor` - Tandoor recipe manager
