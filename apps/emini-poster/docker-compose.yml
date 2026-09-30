@@ -1,0 +1,32 @@
+name: emini-poster
+
+services:
+  emini-poster:
+    build: .
+    container_name: emini-poster
+    restart: unless-stopped
+    networks:
+      - dokploy-network
+    # Dokploy writes UI variables to .env; env_file injects them into this container.
+    env_file:
+      - .env
+    environment:
+      HA_URL: ${HA_URL:-http://homeassistant.bishop-bass.ts.net}
+      HA_TOKEN: ${HA_TOKEN:?set HA_TOKEN in .env}
+      BATTERY_ENTITY: ${BATTERY_ENTITY:?set BATTERY_ENTITY in .env}
+      WEATHER_ENTITY: ${WEATHER_ENTITY:-weather.forecast_home}
+      # By IP (a DHCP reservation): home-ff2e.local is mDNS only, which containers can't resolve.
+      EMINI_HOST: ${EMINI_HOST:-192.168.0.49}
+      HOURS: ${HOURS:-24}
+      SHOW: ${SHOW:-1}
+    healthcheck:
+      # Healthy while a picture has reached the NOTE4C within the last two hours.
+      test: ["CMD", "python", "-c", "import os, sys, time; sys.exit(time.time() - os.path.getmtime('/tmp/emini-poster-ok') > 7500)"]
+      interval: 5m
+      timeout: 10s
+      retries: 1
+      start_period: 2m
+
+networks:
+  dokploy-network:
+    external: true
