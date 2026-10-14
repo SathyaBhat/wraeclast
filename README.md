@@ -10,7 +10,6 @@ Wraeclast is my homeserver powered by ArchLinux. This repo is a monorepo of vari
 - `dawarich` - Dawarich, location history tracker
 - `emini-poster` - Hourly Home Assistant battery + weather picture for the NOTE4C e-paper
 - `firecrawl` - Firecrawl self-hosted scraping API
-- `frame` - Photo frame family dashboard, served at `/frame`
 - `grafana` - Grafana dashboards
 - `hermes` - Hermes agent gateway
 - `influxdb` - InfluxDB
