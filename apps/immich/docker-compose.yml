@@ -93,6 +93,7 @@ services:
 
 volumes:
   model-cache:
+  postgres:
 
 networks:
   dokploy-network:
