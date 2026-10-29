@@ -1,0 +1,17 @@
+# Locally-managed Cloudflare Tunnel "wraeclast-local".
+# Ingress rules live here; Dokploy redeploys the container on change.
+# Adding a hostname here does NOT create DNS - also add a proxied CNAME
+# <name>.sathyabh.at -> 8faa7d10-8bde-4b3f-8d4d-1c236d467258.cfargotunnel.com
+# (or run: cloudflared tunnel route dns wraeclast-local <hostname>).
+tunnel: 8faa7d10-8bde-4b3f-8d4d-1c236d467258
+
+ingress:
+  - hostname: dokploy.sathyabh.at
+    service: http://dokploy:3000
+  - hostname: eats.sathyabh.at
+    service: http://restaurants:8001
+  - hostname: miniflux.sathyabh.at
+    service: http://miniflux:8080
+  - hostname: photos.sathyabh.at
+    service: http://immich_server:2283
+  - service: http_status:404

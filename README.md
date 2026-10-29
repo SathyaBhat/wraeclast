@@ -7,6 +7,7 @@ Wraeclast is my homeserver powered by ArchLinux. This repo is a monorepo of vari
 - `actualbudget` - Actual Budget, personal finance tracker
 - `amex-sync` - Amex transaction sync backend
 - `beszel-agent` / `beszel-hub` - Beszel server monitoring
+- `cloudflared` - Cloudflare Tunnel (`wraeclast-local`); ingress rules in `config.yml`, token in `.env` as `TUNNEL_TOKEN`
 - `dawarich` - Dawarich, location history tracker
 - `emini-poster` - Hourly Home Assistant battery + weather picture for the NOTE4C e-paper
 - `firecrawl` - Firecrawl self-hosted scraping API
